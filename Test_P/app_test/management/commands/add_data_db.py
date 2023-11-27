@@ -12,8 +12,6 @@ class Command(BaseCommand):
         slots_data_json = toolbox.download_json_data(path_file="format_data_slots.json")
 
         for data_slot in slots_data_json:
-            # Ваша существующая логика обработки данных здесь
-
             # Установка date_added на текущую дату и время
             data_slot['date_added'] = datetime.now()
 
