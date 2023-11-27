@@ -1,0 +1,28 @@
+
+.error-message {
+    max-height: 300px;
+    overflow: auto;
+  }
+
+.hidden {
+    display: none;
+}
+
+
+/* #range-slider2 {
+  width: 300px;
+  margin: 20px;
+} */
+
+#range-input3 {
+  width: 100%;
+}
+
+#range-input4 {
+  width: 100%;
+}
+
+/*#range-values {
+  text-align: center;
+  font-size: 18px;
+}*/

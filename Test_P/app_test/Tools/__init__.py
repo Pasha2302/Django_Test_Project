@@ -1,0 +1,1 @@
+from .manager_db_slot_catalog.mysql_manager_slot_catalog import DatabaseManagerSlotCatalog as SlotCatalogDb
