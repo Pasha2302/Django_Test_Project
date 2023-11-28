@@ -34,7 +34,7 @@ async function submitForm() {
         });
 
         if (response.ok) {
-            // Просто перезагрузите страницу, если ответ успешен
+            // Просто перезагрузит страницу, если ответ успешен
             location.reload();
         } else {
             const errorText = await response.text(); // Получить текст ошибки

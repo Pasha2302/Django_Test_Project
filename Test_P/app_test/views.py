@@ -1,21 +1,48 @@
+# from django.contrib.auth.decorators import login_required
 from django.forms import model_to_dict
 from django.shortcuts import render, get_object_or_404
 
 from django.http import HttpRequest
 from django.shortcuts import redirect
 
+from asgiref.sync import sync_to_async, async_to_sync
 from app_test.models import SlotCatalog
+from django.contrib.auth.views import LoginView
+
+from .my_decorators import login_required as log_req
+from django.contrib import messages
 
 
+class CustomLoginView(LoginView):
+    template_name ='app_test/registration/login.html'
+
+    def form_invalid(self, form):
+        # Дополнительные действия (при неверных данных формы)
+        messages.error(self.request, 'Неправильный логин или пароль')
+        # Вызываем метод form_invalid родительского класса для стандартной обработки
+        return super().form_invalid(form)
+
+
+@log_req
+async def profile_view(request):
+    # Редирект на главную страницу
+    return redirect(index)
+
+
+async def task_sleep():
+    print("Ожидание 30 сек ...")
+    await asyncio.sleep(60)
+    print("\nЯ проснулся !")
+
+
+@log_req
 async def index(request: HttpRequest):
+    asyncio.create_task(task_sleep())
+    await asyncio.sleep(0)
     return render(request, "app_test/TEST.html")
 
 
-async def room(request: HttpRequest, room_name=None):
-    print(f"ROOM: {room_name=}")
-    return render(request, "app_test/room.html", {"room_name": room_name})
-
-
+@log_req
 async def one_slot(request: HttpRequest, slug_slot=None):
     print(f"One Slot: {slug_slot}, request.GET: {request.GET}")
 
@@ -95,7 +122,7 @@ async def requests_view(request):
 
 from functools import partial
 from django.http import HttpResponse
-from asgiref.sync import sync_to_async, async_to_sync
+
 
 
 def sleep(seconds: int):

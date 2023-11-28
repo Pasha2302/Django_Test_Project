@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-7is=c0u_20^rs_ctr&2e&3!et(e+^k(9edmer^8eo@4wggn@x*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '3229-89-113-151-240.ngrok-free.app']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '4941-185-211-158-224.ngrok-free.app']
 
 
 # Application definition
@@ -122,6 +122,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+LOGIN_URL = '/login/'  # Указывает Django, куда перенаправлять не аутентифицированных пользователей
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

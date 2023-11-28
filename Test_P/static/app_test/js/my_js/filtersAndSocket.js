@@ -9,7 +9,7 @@ const filterInput = document.getElementById('filterInput');
 const resultsList = document.getElementById('results');
 //const socket = new WebSocket('ws://92.53.124.166/ws/test_filter');
 //const socket = new WebSocket('ws://127.0.0.1:8000/ws/test_filter/');
-const socket = new WebSocket('wss://3229-89-113-151-240.ngrok-free.app/ws/test_filter/');
+const socket = new WebSocket('wss://4941-185-211-158-224.ngrok-free.app/ws/test_filter/');
 
 
 // Обработка поля ввода названия слота:
