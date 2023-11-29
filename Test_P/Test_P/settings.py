@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-7is=c0u_20^rs_ctr&2e&3!et(e+^k(9edmer^8eo@4wggn@x*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '4941-185-211-158-224.ngrok-free.app']
 
@@ -52,14 +52,22 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Для правильной обработки статических файлов Django рекомендуется использовать WhiteNoise,
 ]
+
+# Включите сжатие (необязательно, но рекомендуется для улучшения производительности) в настройках:
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_USE_CDN = True
 
 ROOT_URLCONF = 'Test_P.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

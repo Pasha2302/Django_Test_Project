@@ -10,9 +10,12 @@ bind = "127.0.0.1:8000"
 # Путь к файлу, в котором будет храниться PID процесса Gunicorn.
 pidfile = f"gunicorn_pid.txt"
 
+# Это указывает Gunicorn на путь к вашему проекту Django.
+pythonpath = '/home/pavelpc/PycharmProjects/Working_Projects/Django_Test_Project'
+
 # Путь к статическим файлам Django (CSS, JavaScript, изображения и т.д.).
 # Должен соответствовать настройке STATIC_ROOT в файле настроек Django.
-#raw_env = "DJANGO_STATIC_PATH=/home/pavelpc/PycharmProjects/Working_Projects/Django_Game_Slots/game_slots/"
+raw_env = "DJANGO_STATIC_PATH=/home/pavelpc/PycharmProjects/Working_Projects/Django_Test_Project/Test_P/static"
 
 
 # Дополнительные параметры для оптимизации производительности.

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main role="main">
+
+  <!-- Main jumbotron for a primary marketing message or call to action -->
+  <div class="jumbotron">
+    <div class="container">
+
+      <h3 id="current-time">Current Date-Time: Loading...</h3>
+      <h5 id="test-socket">Test Data: Loading...</h5>
+
+      <h1 class="display-3">Hello, world!</h1>
+      <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+      <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-md-4">
+        <h2>Heading</h2>
+        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+      </div>
+      <div class="col-md-4">
+        <h2>Heading</h2>
+        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+      </div>
+      <div class="col-md-4">
+        <h2>Heading</h2>
+        <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+      </div>
+    </div>
+
+    <hr>
+
+  </div> <!-- /container -->
+
+</main>
+<script>
+  const socket1 = new WebSocket("ws://92.53.124.166:80/ws/time");
+<!--  const socket1 = new WebSocket("wss://dbec-185-211-158-113.ngrok-free.app/ws/time");-->
+  socket1.onmessage = function (event) {
+      const dataTime = JSON.parse(event.data);
+      const currentTime = dataTime.time;
+
+      const currentTimeElement = document.getElementById("current-time");
+      currentTimeElement.textContent = "Current Date-Time: " + currentTime;
+
+<!--      console.log("Current Date-Time:", currentTime);-->
+  };
+
+  socket1.onclose = function (event) {
+      console.log("Connection closed:", event);
+  };
+</script>
+
+<!--<script>-->
+<!--  // const socket2 = new WebSocket("ws://127.0.0.1:8000/ws");-->
+<!--  const socket2 = new WebSocket("wss://4547-45-137-112-162.ngrok-free.app/ws");-->
+<!--  socket2.onmessage = function (event) {-->
+<!--      const dataTest = JSON.parse(event.data);-->
+<!--      const testData = dataTest.test_data;-->
+
+<!--      const testWebsocketData = document.getElementById("test-socket");-->
+<!--&lt;!&ndash;      testWebsocketData.textContent = "Test Data: " + testData;&ndash;&gt;-->
+<!--      testWebsocketData.innerHTML = "Test Data: " + testData;-->
+<!--  };-->
+
+<!--  socket2.onclose = function (event) {-->
+<!--      console.log("Connection closed:", event);-->
+<!--  };-->
+<!--</script>-->
+
+{% endblock %}

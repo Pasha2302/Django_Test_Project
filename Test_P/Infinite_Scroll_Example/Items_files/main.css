@@ -1,0 +1,84 @@
+/* Set style for html document body */
+html,body{ height:100%;}
+body{
+	font-size:76%;
+	padding:0;
+	margin:0;
+	background-color: #eee;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-align:center;
+}
+
+a { color:#0033cc; }
+
+#header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding-bottom: 1em;
+  background-color: #eee;
+  border-bottom: 1px solid #000;
+  height: 7.5em;
+}
+
+.headertoo { height: 7.5em; }
+
+h2{
+	font-size:24px;
+	font-family:Arial;
+	font-weight:normal;
+	border-bottom:solid 1px #ccc;
+	line-height:2em;
+	margin:0;
+}
+
+div.listitem {
+  margin: 2em 10em;
+  border: 1px solid #888;
+  border-radius: 8px;
+  padding-bottom: 1em;
+  background-color: #fff;
+}
+
+span.video {
+  margin: 1em;
+}
+
+img.itemimage {
+  float: left;
+  margin-right: 2em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+span.listitemside {
+  display: block;
+  width: 100px; 
+  margin: 0.5em; 
+  padding: 0.5em;
+}
+.floatright {
+  float: right; 
+}
+.floatleft {
+  float: left; 
+}
+
+div.listpagination {
+  padding: 1em;
+  border-top: 1px dotted #666;
+  font-size: 2.0em;
+}
+
+div.listpagination:before { content: ' ~ ~ ~ ';}
+div.listpagination:after  { content: ' ~ ~ ~ ';}
+
+#pagination {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #000;
+  padding-bottom: 1em;
+  padding-top: 1em;
+  background-color: #eee;
+}

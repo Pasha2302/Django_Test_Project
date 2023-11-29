@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %} Show slot catalog {% endblock %}
+
+{% block content %}
+
+<style>
+    .scrollable-cell {
+        max-width: 150px; /* Укажите желаемую ширину ячейки */
+        overflow-x: auto;
+    }
+</style>
+
+<main role="main">
+
+<div class="container">
+    <h2>Slot Data</h2>
+
+    <table class="table table-bordered" id="combinedTable">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for key, value in data_slot.items() %}
+            <tr>
+                <td class="scrollable-cell">{{ key }}</td>
+                <td class="scrollable-cell data_slot">{{ value }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!--    ================================================================================================================-->
+
+<div class="container-fluid my-5 p-3 text-white text-center">
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item">
+                    {% if page > 1 %}
+                        <a class="page-link" href="?page={{ page - 1 }}" {% if page == 1 %}tabindex="-1" aria-disabled="true"{% endif %} aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    {% endif %}
+                </li>
+
+                {% for p in pages %}
+                    {% if p == '...' %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% else %}
+                        <li class="page-item {% if p == page %}active{% endif %}">
+                            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page + 1 }}" {% if page == total_pages %}tabindex="-1" aria-disabled="true"{% endif %} aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <form class="form my-2 my-lg-0">
+        <input class="form-control-inline mr-sm-2" type="text" placeholder="Go to page" aria-label="Search" id="goToPageInput">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="goToPage()">Go</button>
+    </form>
+</div>
+
+
+<script>
+    function goToPage() {
+        let pageInput = document.getElementById('goToPageInput');
+        let page = parseInt(pageInput.value);
+        if (!isNaN(page) && page >= 1 && page <= {{ total_pages }}) {
+            window.location.href = "?page=" + page;
+        } else {
+            alert('Invalid page number');
+        }
+    }
+</script>
+
+<script>
+    // Получаем таблицу
+    let combinedTable = document.getElementById("combinedTable");
+
+    // Получаем все строки (кроме заголовков)
+    let rows = combinedTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+    // Проходим по строкам и сравниваем значения ячеек
+    for (var i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName("td");
+        let data_slot = cells[1].textContent.trim();
+
+        // Если значение в ячейке - ссылка, делаем его кликабельным
+        if (data_slot.startsWith("http") || data_slot.startsWith("https")) {
+            cells[1].innerHTML = '<a href="' + data_slot + '" target="_blank">' + data_slot + '</a>';
+        }
+    }
+</script>
+
+</main>
+{% endblock %}

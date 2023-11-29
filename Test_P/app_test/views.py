@@ -1,8 +1,10 @@
-# from django.contrib.auth.decorators import login_required
+import re
+
+from django.core.paginator import Paginator
 from django.forms import model_to_dict
 from django.shortcuts import render, get_object_or_404
 
-from django.http import HttpRequest
+from django.http import HttpRequest, Http404, JsonResponse
 from django.shortcuts import redirect
 
 from asgiref.sync import sync_to_async, async_to_sync
@@ -11,6 +13,7 @@ from django.contrib.auth.views import LoginView
 
 from .my_decorators import login_required as log_req
 from django.contrib import messages
+
 
 
 class CustomLoginView(LoginView):
@@ -42,6 +45,30 @@ async def index(request: HttpRequest):
     return render(request, "app_test/TEST.html")
 
 
+def slots_list(request: HttpRequest):
+    page_number = request.GET.get("page")
+
+    # try: int(page_number)
+    # except Exception as err:
+    #     print(f"[slots_list(request: HttpRequest):] {err}")
+    #     return render(request, '404.html', status=404)
+
+    contact_list = SlotCatalog.objects.all()
+    # print(contact_list)
+    paginator = Paginator(contact_list, 24)
+    print(f"{paginator.num_pages=}")
+
+    if page_number and re.search(r"\d+", page_number):
+        page_number = re.search(r"\d+", page_number).group()
+        if int(page_number) > paginator.num_pages: raise Http404()
+    else: page_number = 1
+    # page_obj = sync_to_async(paginator.get_page(page_number))
+    page_obj = paginator.get_page(page_number)
+
+    context = {"page_obj_slots": page_obj}
+    return render(request, "app_test/test_paginator.html", context=context)
+
+
 @log_req
 async def one_slot(request: HttpRequest, slug_slot=None):
     print(f"One Slot: {slug_slot}, request.GET: {request.GET}")
@@ -56,7 +83,39 @@ async def one_slot(request: HttpRequest, slug_slot=None):
     context = {"data_slot": slot_dict}
     return render(request, template_name="app_test/one_slot.html", context=context)
 
+# ******************************************************************************************************* *
 
+def new_data():
+    count = 0
+    while True:
+        yield count
+        count +=1
+
+gen_new_data = new_data()
+
+
+def load_more(request):
+    # Ваш код для загрузки следующих данных
+    # Пример возврата данных в формате JSON
+    count = request.GET.get('count', 0)
+    count = int(count)
+
+    new_data_list = [f'Новые данные {count + i}' for i in range(1, 50)]
+    count += 10
+
+    data = {
+        'response': new_data_list,  # Замените на реальные данные
+        'next_data_url': f'/load_more/?count={count}',  # Замените на реальный URL
+    }
+
+    return JsonResponse(data)
+
+def test_scroll(request: HttpRequest):
+    return render(request, template_name="app_test/test_scroll.html")
+
+def handler404(request: HttpRequest, exception):
+    print("\nHandler 404")
+    return render(request, 'app_test/404.html', status=404)
 
 # ============================================================================================================== #
 import asyncio

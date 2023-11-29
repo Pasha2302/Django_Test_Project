@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %} Show slot catalog {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<main role="main">
+    <div class="container mt-5 text-center border border-3">
+
+
+        <div class="row">
+            <div class="col px-2 mb-2 mt-2 mx-2">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="optionIframe" name="option1">
+                    <label class="form-check-label" for="optionIframe">Iframe Game Url</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col px-2 mb-2 mt-2 mx-2">
+                <h5>Max Win</h5>
+                <div id="range-slider2">
+                    <input type="range" id="range-input3" min="0" max="300000000" step="1" value="0">
+                    <input type="range" id="range-input4" min="0" max="300000000" step="1" value="300000000">
+                </div>
+                <p id="range-values1">0 - 300000000</p>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col px-2 mb-2 mt-2 mx-2">
+                <h5>RTP %</h5>
+                <div id="range-slider">
+                    <input type="range" id="range-input" min="0" max="100" step="1" value="0">
+                    <input type="range" id="range-input2" min="0" max="100" step="1" value="100">
+                </div>
+                <p id="range-values">0 - 100</p>
+            </div>
+
+
+            <div class="col px-2 mb-2 mt-2 mx-2">
+                <h5>Min/Max Bet</h5>
+                <div id="range-slider3">
+                    <input type="range" id="range-input5" min="0" max="100" step="1" value="0">
+                    <input type="range" id="range-input6" min="0" max="100" step="1" value="100">
+                </div>
+                <p id="range-values2">0 - 100</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col px-2 mb-2 mt-2 mx-2">
+                <input type="text" id="filterInput" placeholder="Type to filter">
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="container mt-5 text-center border border-3">
+        
+        <ul id="results"></ul>
+    </div>
+
+</main>
+
+
+<script src="{% static 'slot_catalog/js/my_js/filtersAndSocket.js' %}"></script>
+{% endblock %}

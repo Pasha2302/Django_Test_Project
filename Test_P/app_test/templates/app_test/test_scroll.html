@@ -1,0 +1,61 @@
+<!-- templates/app_test/test_scroll.html -->
+
+{% extends "app_test/base.html" %}
+{% load static %}
+
+{% block title %} Test Scroll {% endblock %}
+
+{% block content %}
+<script src="{% static 'app_test/js/my_js/test_infinite_scroll.js' %}"></script>
+
+<div id="scrollingcontent">
+  <ul class="listitempage" id="data-list">
+    <!-- Здесь будут отображаться данные -->
+  </ul>
+</div>
+
+<div class="pagination" id="pagination">
+  <!-- Здесь будет отображаться пагинация -->
+</div>
+
+<script>
+  var nextDataUrl = "{% url 'load_more' %}";
+  var loading = false; // Флаг, указывающий, идет ли загрузка данных
+
+  function loadMore() {
+    if (nextDataUrl === "" || loading) {
+      return;
+    }
+
+    loading = true; // Устанавливаем флаг, что начата загрузка
+
+    $('#pagination').hide();
+
+    $.getJSON(nextDataUrl, function(data) {
+      // Проверяем, есть ли новые данные
+      if (data.response.length > 0) {
+        // Отображаем новые данные
+        data.response.forEach(item => {
+          $('#data-list').append(`<li>${item}</li>`);
+        });
+
+        // Обновляем URL для следующего запроса
+        nextDataUrl = data.next_data_url;
+      } else {
+        // Если больше нет данных, скрываем пагинацию
+        $('#pagination').hide();
+      }
+
+      loading = false; // Сбрасываем флаг загрузки
+    });
+  }
+
+  // Обработка события прокрутки
+  $(window).scroll(function() {
+    // Когда пользователь доскролливает до нижней части страницы, загружаем новые данные
+    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+      loadMore();
+    }
+  });
+</script>
+{% endblock %}

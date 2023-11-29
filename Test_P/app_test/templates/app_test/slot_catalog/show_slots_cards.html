@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %} Show slot catalog {% endblock %}
+
+{% block content %}
+
+<main role="main">
+  <div class="container mt-3 text-center border border-3">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+      {% for data_slot in data_slot_list %}
+      <div class="col-sm-4">
+        <div class="card h-100">
+          <img src="{{ url_for('static', path='/img/1.jpeg') }}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <a href="/show_one_slot_card?name_slot={{ data_slot.name_card }}">
+                <h5 class="card-title">{{ data_slot.name_card }}</h5>
+            </a>
+            <p class="card-text">{{ data_slot_list.provider }}</p>
+          </div>
+          <div class="card-footer">
+            <small class="text-body-secondary">Last updated 3 mins ago</small>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+
+<!--# ============================================================================================================= #-->
+
+  <div class="container-fluid my-5 p-3 text-white text-center">
+      <div class="d-flex justify-content-center">
+          <nav aria-label="Page navigation">
+              <ul class="pagination">
+                  <li class="page-item">
+                      {% if page > 1 %}
+                          <a class="page-link" href="?page={{ page - 1 }}" {% if page == 1 %}tabindex="-1" aria-disabled="true"{% endif %} aria-label="Previous">
+                              <span aria-hidden="true">&laquo;</span>
+                          </a>
+                      {% endif %}
+                  </li>
+
+                  {% for p in pages %}
+                      {% if p == '...' %}
+                          <li class="page-item disabled"><span class="page-link">...</span></li>
+                      {% else %}
+                          <li class="page-item {% if p == page %}active{% endif %}">
+                              <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                          </li>
+                      {% endif %}
+                  {% endfor %}
+
+                  <li class="page-item">
+                      <a class="page-link" href="?page={{ page + 1 }}" {% if page == total_pages %}tabindex="-1" aria-disabled="true"{% endif %} aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                      </a>
+                  </li>
+              </ul>
+          </nav>
+      </div>
+
+      <form class="form my-2 my-lg-0">
+          <input class="form-control-inline mr-sm-2" type="text" placeholder="Go to page" aria-label="Search" id="goToPageInput">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="goToPage()">Go</button>
+      </form>
+  </div>
+
+
+  <script>
+      function goToPage() {
+          let pageInput = document.getElementById('goToPageInput');
+          let page = parseInt(pageInput.value);
+          if (!isNaN(page) && page >= 1 && page <= {{ total_pages }}) {
+              window.location.href = "?page=" + page;
+          } else {
+              alert('Invalid page number');
+          }
+      }
+  </script>
+
+</main>
+{% endblock %}

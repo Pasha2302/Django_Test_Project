@@ -1,12 +1,135 @@
 {% extends "app_test/base.html" %}
-
-{% block title %} Show slot catalog {% endblock %}
-
 {% load static %}
+
+{% block link %}
+<link rel="canonical" href="https://example.com/slots?page=1" />
+{% if page_obj_slots.has_other_pages %}
+    {% if page_obj_slots.has_previous %}
+        <link rel="prev" href="{% url 'slots_list' %}?page={{ page_obj_slots.previous_page_number }}">
+    {% endif %}
+    {% if page_obj_slots.has_next %}
+        <link rel="next" href="{% url 'slots_list' %}?page={{ page_obj_slots.next_page_number }}">
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+
+{% block title %} Test Paginator {% endblock %}
 
 
 {% block content %}
 
+<main role="main">
+
+  <div class="container mt-3 text-center border border-3">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+      {% for data_slot in page_obj_slots %}
+      <div class="col-sm-4 mt-3 mb-3">
+        <div class="card h-100">
+          <img src="{% static 'app_test/img/1.jpeg' %}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <a href="{% url 'one_slot' data_slot.slug %}">
+                <h5 class="card-title">{{ data_slot.name_slot|upper }}</h5>
+            </a>
+            <p class="card-text">{{ data_slot.provider }}</p>
+          </div>
+          <div class="card-footer">
+            <small class="text-body-secondary">Last updated 3 mins ago</small>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+
+<div class="container-fluid my-5 p-3 text-white text-center">
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+
+                <li class="page-item">
+                    {% if page_obj_slots.has_previous %}
+                        <a class="page-link" href="?page={{ page_obj_slots.previous_page_number }}" aria-label="First">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">1</a>
+                </li>
+
+                {% with upper_limit=page_obj_slots.number|add:'3' %}
+                {% with lower_limit=page_obj_slots.number|add:'-3' %}
+
+                    {% for p in page_obj_slots.paginator.page_range %}
+                    {% if 1 < p and p <= upper_limit and p > lower_limit %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ p }}">
+                                {{ p }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% endfor %}
+
+                {% endwith %}
+                {% endwith %}
+
+                <li class="page-item">
+                    {% if page_obj_slots.has_next %}
+                        <a href="?page={{ page_obj_slots.next_page_number }}" aria-label="Next" class="page-link">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    {% endif %}
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+
+    <form class="form my-2 my-lg-0">
+        <input class="form-control-inline mr-sm-2" type="text" name="page" placeholder="Go to page" aria-label="Search" id="goToPageInput">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="generateUrl()">Go</button>
+    </form>
 
 
+<script>
+    document.getElementById('goToPageInput').addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            generateUrl();
+        }
+    });
+
+    function generateUrl() {
+        event.preventDefault();
+        let pageInput = document.getElementById('goToPageInput');
+        let page = pageInput.value.trim();
+
+        if (page !== "") {
+            let baseUrl = window.location.pathname;
+            let url = "{% url 'slots_list' %}?page=" + encodeURIComponent(page);
+            window.location.href = url;
+        } else {
+            alert('Введите номер страницы.');
+        }
+    }
+</script>
+
+
+
+
+</div>
+
+
+<div class="container mt-3 text-center border border-3">
+    <p>Page {{ page_obj_slots.number }} of {{ page_obj_slots.paginator.num_pages }}.</p>
+    <p>Page Range {{ page_obj_slots.paginator.page_range }} .</p>
+    <p>Current Page {{ page_obj_slots.number }} .</p>
+    <p>Current Page {{ page_obj_slots.number|add:'3' }} .</p>
+</div>
+
+
+</main>
 {% endblock %}

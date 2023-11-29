@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %} Show slot catalog {% endblock %}
+
+{% block content %}
+
+
+<style>
+    .scrollable-cell {
+        max-width: 150px; /* Укажите желаемую ширину ячейки */
+        overflow-x: auto;
+    }
+</style>
+
+<main role="main">
+
+
+    <div class="container">
+        <h2>Slot Data</h2>
+
+        <table class="table table-bordered" id="combinedTable">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for key, value in data_slot.items() %}
+                <tr>
+                    <td class="scrollable-cell">{{ key }}</td>
+                    <td class="scrollable-cell value">{{ value }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+<!--    ================================================================================================================-->
+
+</main>
+<script>
+    // Получаем таблицу
+    let combinedTable = document.getElementById("combinedTable");
+
+    // Получаем все строки (кроме заголовков)
+    let rows = combinedTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+    // Проходим по строкам и сравниваем значения ячеек
+    for (var i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName("td");
+        let value = cells[1].textContent.trim();
+
+        // Если значение в ячейке - ссылка, делаем его кликабельным
+        if (value.startsWith("http") || value.startsWith("https")) {
+            cells[1].innerHTML = '<a href="' + value + '" target="_blank">' + value + '</a>';
+        }
+    }
+</script>
+<!--<script src="{{ url_for('static', path='/js/my_js/filters.js') }}"></script>-->
+{% endblock %}

@@ -15,6 +15,10 @@
     <!-- Пользовательские стили для этого шаблона -->
     <link href="{% static 'app_test/css/jumbotron.css' %}" rel="stylesheet">
     <link href="{% static 'app_test/css/my_css.css' %}" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    {% block link %}{% endblock %}
+
   </head>
 
   <body>
@@ -27,20 +31,10 @@
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-<!--          <li class="nav-item active">-->
-<!--            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="#">Link</a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link disabled" href="#">Disabled</a>-->
-<!--          </li>-->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Database</a>
             <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="/show_slot_catalog_new_data">Show slot catalog DB</a>
-              <a class="dropdown-item" href="/show_all_slots_cards">Show all slots-cards</a>
+              <a class="dropdown-item" href="{% url 'slots_list' %}">Show all slots-cards</a>
             </div>
           </li>
         </ul>
@@ -52,29 +46,11 @@
     </nav>
 
     <div class="container mt-5">
-        <form id="filterForm" action="#" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="searchInput">Поиск по названию:</label>
-                <input type="text" class="form-control" id="searchInput" name="searchInput" required>
-            </div>
-
-            <div class="form-group">
-                <label>Дополнительные опции:</label>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="option1" name="option1">
-                    <label class="form-check-label" for="option1">Опция 1</label>
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="option2" name="option2">
-                    <label class="form-check-label" for="option2">Опция 2</label>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Применить фильтр</button>
-            <a href="/show_all_slots_cards" class="btn btn-primary" id="показать-записи">Показать все записи</a>
-            <a href="{% url 'index' %}" class="btn btn-primary" id="test_html">Тест Поиска!</a>
-        </form>
+        <div class="form-group">
+          <a href="{% url 'slots_list' %}" class="btn btn-primary" id="показать-записи">Показать все записи</a>
+          <a href="{% url 'index' %}" class="btn btn-primary" id="test_html">Тест Поиска!</a>
+          <a href="{% url 'test_scroll' %}" class="btn btn-primary" id="test_html2">Тест Бесконечного Скролла.!</a>
+        </div>
     </div>
 
     {% block content %}{% endblock %}
@@ -86,12 +62,12 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static 'app_test/js/jquery-3.3.1.slim.min.js' %}"></script>
+
     <script src="{% static 'app_test/js/popper.min.js' %}"></script>
     <script src="{% static 'app_test/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'app_test/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'app_test/js/bootstrap.bundle.min.js' %}">
 
-    <script src="{% static 'app_test/js/my_js/filters.js' %}"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/noframework.waypoints.min.js"></script>
+
   </body>
 </html>
