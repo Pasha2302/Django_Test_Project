@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-7is=c0u_20^rs_ctr&2e&3!et(e+^k(9edmer^8eo@4wggn@x*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '4941-185-211-158-224.ngrok-free.app']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '7966-185-211-158-227.ngrok-free.app']
 
 
 # Application definition
@@ -86,12 +86,29 @@ ASGI_APPLICATION = "Test_P.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'slotCatalogDjango',
+        'USER': 'pavelpc',
+        'PASSWORD': '1234',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
+        'CONN_MAX_AGE': 600,
+        # 'ATOMIC_REQUESTS': True,
     }
 }
+
 
 
 # Password validation
@@ -132,6 +149,16 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 LOGIN_URL = '/login/'  # Указывает Django, куда перенаправлять не аутентифицированных пользователей
+
+
+# Опция APPEND_SLASH управляет тем, будет ли Django автоматически добавлять
+# к URL'ам слеш "/" в конце. Установка в False отключит это поведение.
+APPEND_SLASH = False
+
+# Установка времени жизни сеанса в 15 минут (900 секунд)
+SESSION_COOKIE_AGE = 600
+# Установка, чтобы сеанс сохранялся после каждого запроса
+SESSION_SAVE_EVERY_REQUEST = True
 
 
 # Default primary key field type

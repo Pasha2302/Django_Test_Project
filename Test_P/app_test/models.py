@@ -2,15 +2,22 @@ from datetime import datetime
 
 from django.db import models
 from django.utils.text import slugify
+from django.db.models.manager import BaseManager, Manager, QuerySet
+
+
+class CustomManager(BaseManager.from_queryset(QuerySet)):
+    data = None
+    def custom_method(self) -> int:
+        return self.data
 
 
 class SlotCatalog(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
     name_slot = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, db_index=True, default=None)
+    slug = models.SlugField(unique=True, db_index=True, default=None, max_length=255)
 
     url_slot = models.URLField()
-    iframe_game_url = models.URLField(null=True)
+    iframe_game_url = models.URLField(null=True, max_length=1000)
     provider = models.CharField(max_length=255, null=True)
 
     release_date = models.DateField(null=True)
@@ -38,8 +45,8 @@ class SlotCatalog(models.Model):
     blog_articles = models.TextField(null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
-    objects = models.Manager()
-
+    # objects: QuerySet = models.Manager()
+    objects: QuerySet = CustomManager()
 
     def save(self, *args, **kwargs):
         if not self.slug:

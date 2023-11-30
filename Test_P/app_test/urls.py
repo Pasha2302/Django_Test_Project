@@ -9,12 +9,12 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path('accounts/profile/', views.profile_view, name='profile'),
-    path("slots/<slug:slug_slot>/", views.one_slot, name="one_slot"),
+    path("slots/<slug:slug_slot>", views.one_slot, name="one_slot"),
 
-    path("test_paginator/slots/", views.slots_list, name="slots_list"),
+    path(r"test_paginator/slots", views.SlotsListView.as_view(), name="slots_list"),
 
-    path("load_more/", views.load_more, name="load_more"),
-    path("test_scroll/", views.test_scroll, name="test_scroll"),
+    path("load_more", views.load_more, name="load_more"),
+    path("test_scroll", views.test_scroll, name="test_scroll"),
 
     path('login/', views.CustomLoginView.as_view(), name='login'),
 ]

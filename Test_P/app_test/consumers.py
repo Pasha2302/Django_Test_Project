@@ -4,58 +4,11 @@ from urllib.parse import unquote
 
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 
-
-class ChatConsumerTest(WebsocketConsumer):
-    def connect(self):
-        print("\nCONNECT Web Socket [ChatConsumerTest]")
-        self.accept()
-
-    def disconnect(self, close_code):
-        pass
-
-    def receive(self, text_data=None, bytes_data=None):
-        try:
-            current_loop = asyncio.get_running_loop()
-            current_loop = id(current_loop)
-        except RuntimeError:
-            print("! RuntimeError !")
-            current_loop = 'No ...'
-
-        text_data_json = json.loads(text_data)
-        print(f"{text_data_json=}")
-        message = text_data_json["message"]
-
-        self.send(text_data=json.dumps({"message": f"{message} / Current Loop ID: {current_loop}"}))
-
-
-
-class ChatConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        print("\nCONNECT Web Socket [ChatConsumer]")
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        pass
-
-    async def receive(self, text_data=None, bytes_data=None):
-        try:
-            current_loop = asyncio.get_running_loop()
-            current_loop = id(current_loop)
-        except RuntimeError:
-            print("! RuntimeError !")
-            current_loop = 'No ...'
-
-        text_data_json = json.loads(text_data)
-        print(f"{text_data_json=}")
-        message = text_data_json["message"]
-
-        await self.send(text_data=json.dumps({"message": f"{message} / Current Loop ID: {current_loop}"}))
-
-
-# ==================================================================================================================== #
 from .Tools import SlotCatalogDb
 from .Tools import toolbox
 from django.utils.text import slugify
+# ==================================================================================================================== #
+
 def check_is_numbers(string: str):
     if string.isdigit(): string = float(string)
     else: string = 0.0

@@ -1,25 +1,28 @@
-import re
 
-from django.core.paginator import Paginator
 from django.forms import model_to_dict
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
 from django.http import HttpRequest, Http404, JsonResponse
 from django.shortcuts import redirect
 
 from asgiref.sync import sync_to_async, async_to_sync
+from django.utils.decorators import method_decorator
+from django.views import View
+
 from app_test.models import SlotCatalog
 from django.contrib.auth.views import LoginView
 
 from .my_decorators import login_required as log_req
 from django.contrib import messages
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class CustomLoginView(LoginView):
     template_name ='app_test/registration/login.html'
 
-    def form_invalid(self, form):
+    async def form_invalid(self, form):
         # Дополнительные действия (при неверных данных формы)
         messages.error(self.request, 'Неправильный логин или пароль')
         # Вызываем метод form_invalid родительского класса для стандартной обработки
@@ -45,28 +48,53 @@ async def index(request: HttpRequest):
     return render(request, "app_test/TEST.html")
 
 
-def slots_list(request: HttpRequest):
-    page_number = request.GET.get("page")
+from .Tools import toolbox
+from .Tools import SlotCatalogDb
 
-    # try: int(page_number)
-    # except Exception as err:
-    #     print(f"[slots_list(request: HttpRequest):] {err}")
-    #     return render(request, '404.html', status=404)
+slots_data: None  = None
+db_slot_catalog: SlotCatalogDb = SlotCatalogDb(
+    host='127.0.0.1', port=3306, user='pavelpc', password='1234', database='slotCatalogDjango'
+)
 
-    contact_list = SlotCatalog.objects.all()
-    # print(contact_list)
-    paginator = Paginator(contact_list, 24)
-    print(f"{paginator.num_pages=}")
 
-    if page_number and re.search(r"\d+", page_number):
-        page_number = re.search(r"\d+", page_number).group()
-        if int(page_number) > paginator.num_pages: raise Http404()
-    else: page_number = 1
-    # page_obj = sync_to_async(paginator.get_page(page_number))
-    page_obj = paginator.get_page(page_number)
+@toolbox.time_it_async
+async def get_all_data_db():
+    query_db = "SELECT id, name_slot, provider, slug FROM app_test_slotcatalog"
+    return await db_slot_catalog.execute_query(query_db, fetch=True)
 
-    context = {"page_obj_slots": page_obj}
-    return render(request, "app_test/test_paginator.html", context=context)
+@toolbox.time_it_async
+async def get_all_data_db_orm():
+    return await sync_to_async(list)(SlotCatalog.objects.all().values('id', 'name_slot', 'provider', 'slug'))
+
+class SlotsListView(View):
+    template_name = "app_test/test_paginator.html"
+
+
+    @method_decorator(log_req)
+    @toolbox.time_it_async
+    async def get(self, request: HttpRequest):
+        global slots_data
+        page_number = request.GET.get("page", 1)
+
+        # if not slots_data:
+        await db_slot_catalog.connect()
+        print("\nЗапрашиваю данные из базы [SlotCatalog]")
+        # slots_data = await SlotCatalog.objects.values('id', 'name_slot', 'provider', 'slug')
+        # slots_data = await get_all_data_db_orm()
+        slots_data = await get_all_data_db()
+
+
+        # paginator = Paginator(slots_data.order_by('id'), 24)
+        paginator = Paginator(slots_data, 24)
+
+        range_pages = paginator.get_elided_page_range(number=page_number, on_each_side=1, on_ends=1)
+        try:
+            page_obj = paginator.page(page_number)
+        except (PageNotAnInteger, EmptyPage):
+            raise Http404()
+
+        context = {"page_obj_slots": page_obj, 'range_pages': range_pages}
+        return render(request, self.template_name, context=context)
 
 
 @log_req
@@ -75,7 +103,12 @@ async def one_slot(request: HttpRequest, slug_slot=None):
 
     # sync_to_async по умолчанию работает в "потоко-чувствительном" режиме. (избегая состояния гонки.)
     # thread_sensitive: bool = True (блокирует основной поток.)
-    data_slot = await sync_to_async(get_object_or_404)(SlotCatalog, slug=slug_slot)
+    # data_slot = await sync_to_async(get_object_or_404)(SlotCatalog, slug=slug_slot)
+
+    try:
+        data_slot = await SlotCatalog.objects.aget(slug=slug_slot)
+    except ObjectDoesNotExist: raise Http404
+    print(f"{data_slot=}")
     # Преобразуем объект в словарь
     slot_dict = model_to_dict(data_slot)
 
@@ -85,33 +118,29 @@ async def one_slot(request: HttpRequest, slug_slot=None):
 
 # ******************************************************************************************************* *
 
-def new_data():
-    count = 0
-    while True:
-        yield count
-        count +=1
 
-gen_new_data = new_data()
-
-
-def load_more(request):
+async def load_more(request):
     # Ваш код для загрузки следующих данных
     # Пример возврата данных в формате JSON
     count = request.GET.get('count', 0)
     count = int(count)
 
-    new_data_list = [f'Новые данные {count + i}' for i in range(1, 50)]
+    async def get_new_data():
+        return [f'Новые данные {count + i}' for i in range(1, 50)]
+
     count += 10
 
     data = {
-        'response': new_data_list,  # Замените на реальные данные
-        'next_data_url': f'/load_more/?count={count}',  # Замените на реальный URL
+        'response': await get_new_data(),  # Замените на реальные данные
+        'next_data_url': f'/load_more?count={count}',  # Замените на реальный URL
     }
 
     return JsonResponse(data)
 
+
 def test_scroll(request: HttpRequest):
     return render(request, template_name="app_test/test_scroll.html")
+
 
 def handler404(request: HttpRequest, exception):
     print("\nHandler 404")

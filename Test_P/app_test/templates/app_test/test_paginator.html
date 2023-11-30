@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block link %}
-<link rel="canonical" href="https://example.com/slots?page=1" />
+<link rel="canonical" href="{{ request.build_absolute_uri }}" />
 {% if page_obj_slots.has_other_pages %}
     {% if page_obj_slots.has_previous %}
-        <link rel="prev" href="{% url 'slots_list' %}?page={{ page_obj_slots.previous_page_number }}">
+        <link rel="prev" href="{{ request.build_absolute_uri|add:'?page=' }}{{ page_obj_slots.previous_page_number }}" />
     {% endif %}
     {% if page_obj_slots.has_next %}
-        <link rel="next" href="{% url 'slots_list' %}?page={{ page_obj_slots.next_page_number }}">
+        <link rel="prev" href="{{ request.build_absolute_uri|add:'?page=' }}{{ page_obj_slots.next_page_number }}" />
     {% endif %}
 {% endif %}
 {% endblock %}
@@ -57,25 +57,17 @@
                     {% endif %}
                 </li>
 
-                <li class="page-item">
-                    <a class="page-link" href="?page=1">1</a>
-                </li>
 
-                {% with upper_limit=page_obj_slots.number|add:'3' %}
-                {% with lower_limit=page_obj_slots.number|add:'-3' %}
+                {% for p in range_pages %}
+                    <li class="page-item {% if page_obj_slots.number == p %}active{% endif %}">
+                        {% if p == '…' %}
+                            <p class="page-link" onclick="showPageInput(event, '{{ p }}')">{{ p }}</p>
+                        {% else %}
+                            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
 
-                    {% for p in page_obj_slots.paginator.page_range %}
-                    {% if 1 < p and p <= upper_limit and p > lower_limit %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ p }}">
-                                {{ p }}
-                            </a>
-                        </li>
-                    {% endif %}
-                    {% endfor %}
-
-                {% endwith %}
-                {% endwith %}
 
                 <li class="page-item">
                     {% if page_obj_slots.has_next %}
@@ -84,41 +76,14 @@
                         </a>
                     {% endif %}
                 </li>
-
             </ul>
         </nav>
     </div>
 
-    <form class="form my-2 my-lg-0">
+    <form class="form my-2 my-lg-0" id="pageInputContainer" style="display: none; margin-bottom: 10px;">
         <input class="form-control-inline mr-sm-2" type="text" name="page" placeholder="Go to page" aria-label="Search" id="goToPageInput">
         <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="generateUrl()">Go</button>
     </form>
-
-
-<script>
-    document.getElementById('goToPageInput').addEventListener('keypress', function (event) {
-        if (event.key === 'Enter') {
-            generateUrl();
-        }
-    });
-
-    function generateUrl() {
-        event.preventDefault();
-        let pageInput = document.getElementById('goToPageInput');
-        let page = pageInput.value.trim();
-
-        if (page !== "") {
-            let baseUrl = window.location.pathname;
-            let url = "{% url 'slots_list' %}?page=" + encodeURIComponent(page);
-            window.location.href = url;
-        } else {
-            alert('Введите номер страницы.');
-        }
-    }
-</script>
-
-
-
 
 </div>
 
@@ -132,4 +97,5 @@
 
 
 </main>
+<script src="{% static 'app_test/js/my_js/paginator.js' %}"></script>
 {% endblock %}
